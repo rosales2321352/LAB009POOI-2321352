@@ -5,8 +5,10 @@
 package lab009pooi.pkg2321352;
 
 import classes.Desarrollador;
+import classes.Iniciativa;
 import classes.IniciativaFactory;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,12 +26,43 @@ public class LAB009POOI2321352 {
         employeeList = employeeFactory.getAllDesarrolladores();
     //TODO
     //1. Enumere todas las iniciativas distintas de manera descente.
+        IniciativaFactory iniciativaFactory = new IniciativaFactory();
+        List<Desarrollador> desarrolladores = iniciativaFactory.getAllDesarrolladores();
+            List<String> iniciativasUnicas = desarrolladores.stream()
+                .flatMap(d -> d.getIniciativas().stream())
+                .map(Iniciativa::getNombre)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+            Collections.sort(iniciativasUnicas, Collections.reverseOrder());
+            
+            iniciativasUnicas.forEach(System.out::println);
     //2. Imprima el nombre completo de cualquier desarrollador cuyo nombre
     //comience con "A".
+        desarrolladores.stream()
+            .filter(desarrollador -> desarrollador.getNombres().startsWith("A"))
+            .forEach(desarrollador -> System.out.println(desarrollador.getNombres() + " " + desarrollador.getApellidos()));
+            
     //3. Liste todos los desarrolladores que se unieron en el año 2023 (el año
     //se extraerá del código del desarrollador, es decir, los primeros 4 caracteres)
+           // Utilizar Streams para filtrar y mostrar los desarrolladores que se unieron en el año 2023
+        desarrolladores.stream()
+            .filter(desarrollador -> {
+                String codigo = desarrollador.getCodigo();
+                String yearJoined = codigo.substring(0, 4);
+                return yearJoined.equals("2023");
+            })
+            .forEach(desarrollador -> System.out.println(desarrollador.getNombres() + " " + desarrollador.getApellidos())); 
     //4. Ordene los desarrolladores según el nombre; y luego ordene por
     //salario.
+        desarrolladores.stream()
+                .sorted(Comparator
+                        .comparing(Desarrollador::getNombres)
+                        .thenComparingInt(Desarrollador::getSalario)
+                        
+                )
+                .collect(Collectors.toList());
+        desarrolladores.forEach(desarrollador -> System.out.println(desarrollador.getNombres() + " -Salario: " + desarrollador.getSalario()));
     // 5. Imprimir los nombres de todos los desarrolladores con el tercer salario más alto.
         employeeList.stream()
                 .sorted(Comparator.comparingInt(Desarrollador::getSalario).reversed())
