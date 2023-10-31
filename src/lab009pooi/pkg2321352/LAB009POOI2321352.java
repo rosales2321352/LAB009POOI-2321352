@@ -7,7 +7,9 @@ package lab009pooi.pkg2321352;
 import classes.Desarrollador;
 import classes.IniciativaFactory;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -28,12 +30,42 @@ public class LAB009POOI2321352 {
     //se extraerá del código del desarrollador, es decir, los primeros 4 caracteres)
     //4. Ordene los desarrolladores según el nombre; y luego ordene por
     //salario.
-    //5. Imprima los nombres de todos los desarrolladores con el tercer salario
-   // más alto. (Generalícelo para el enésimo salario más alto).
-    //6. Imprimir salario mínimo.
-    //7. Imprima la lista de todos los desarrolladores con salario mínimo.
-    //8. Liste a todas las personas que trabajan en más de 2 proyectos.
-    //9. Conteo del total de laptops asignadas a los desarrolladores.
+    // 5. Imprimir los nombres de todos los desarrolladores con el tercer salario más alto.
+        employeeList.stream()
+                .sorted(Comparator.comparingInt(Desarrollador::getSalario).reversed())
+                .skip(2)
+                .findFirst()
+                .ifPresent(tercerDesarrollador -> System.out.println("Tercer salario más alto: " + tercerDesarrollador.getNombres()));
+
+    // 6. Imprimir salario mínimo.
+        int salarioMinimo = employeeList.stream()
+                .mapToInt(Desarrollador::getSalario)
+                .min()
+                .orElse(0);
+        System.out.println("Salario mínimo: " + salarioMinimo);
+
+    // 7. Imprimir la lista de todos los desarrolladores con salario mínimo.
+        List<Desarrollador> desarrolladoresSalarioMinimo = employeeList.stream()
+                .filter(d -> d.getSalario() == salarioMinimo)
+                .collect(Collectors.toList());
+        System.out.println("Desarrolladores con salario mínimo:");
+        desarrolladoresSalarioMinimo.forEach(d -> System.out.println(d.getNombres()));
+
+    // 8. Liste a todas las personas que trabajan en más de 2 proyectos.
+        List<Desarrollador> desarrolladoresMasDeDosProyectos = employeeList.stream()
+                .filter(d -> d.getIniciativas().size() > 2)
+                .collect(Collectors.toList());
+        System.out.println("Desarrolladores con más de 2 proyectos:");
+        desarrolladoresMasDeDosProyectos.forEach(d -> System.out.println(d.getNombres()));
+
+    // 9. Conteo del total de laptops asignadas a los desarrolladores.
+        int totalLaptopsAsignadas = employeeList.stream()
+                .mapToInt(Desarrollador::getTotalLaptopsAsignados)
+                .sum();
+        System.out.println("Total de laptops asignadas a los desarrolladores: " + totalLaptopsAsignadas);
+    
+
+
     //10. Recuento de todas las iniciativas con Luis Carrillo Lopez.
     //11. Lista de todas las personas que trabajan con Luis Carrillo Lopez.
     //12. Cree un mapa basado en estos datos, el key debe ser el año de
