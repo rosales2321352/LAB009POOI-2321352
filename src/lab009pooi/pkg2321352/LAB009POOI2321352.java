@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -100,12 +101,44 @@ public class LAB009POOI2321352 {
 
 
     //10. Recuento de todas las iniciativas con Luis Carrillo Lopez.
-    //11. Lista de todas las personas que trabajan con Luis Carrillo Lopez.
-    //12. Cree un mapa basado en estos datos, el key debe ser el año de
-    //incorporación y el valor debe ser la lista de todos los desarrolladores que se
-    //incorporaron en ese año en particular.
-    //14. Cree un mapa basado en estos datos, el key debe ser el año de
-    ///incorporación y el valor debe ser el recuento de personas que se unieron en ese año
-    //en particular.
+
+         var totalIniciativas = employeeList.stream()
+            .flatMap(desarrollador -> desarrollador.getIniciativas().stream())
+            .filter(iniciativa -> iniciativa.getNombreProjectManager().equals("Luis Carrillo Lopez"))
+            .distinct()
+            .count();
+        System.out.println("Recuento de todas las iniciativas con Luis Carrillo Lopez: " + totalIniciativas);
+
+        //11. Lista de todas las personas que trabajan con Luis Carrillo Lopez.
+
+        var personasQueTrabajanConLuisCarrilloLopez = employeeList.stream()
+        .filter(desarrollador -> desarrollador.getIniciativas().stream()
+                .anyMatch(iniciativa -> iniciativa.getNombreProjectManager().equals("Luis Carrillo Lopez")))
+        .distinct()
+        .collect(Collectors.toList());
+        System.out.println("Lista de todas las personas que trabajan con Luis Carrillo Lopez: " + personasQueTrabajanConLuisCarrilloLopez);         
+
+        //12. Cree un mapa basado en estos datos, el key debe ser el año de
+        //incorporación y el valor debe ser la lista de todos los desarrolladores que se
+        //incorporaron en ese año en particular.
+
+        Map<Integer, List<Desarrollador>> desarrolladoresPorAnio = employeeList.stream()
+        .collect(Collectors.groupingBy(
+            desarrollador -> Integer.parseInt(desarrollador.getCodigo().substring(0, 4))
+        ));
+
+        System.out.println("Desarrolladores por Año: "+ desarrolladoresPorAnio);
+
+        //14. Cree un mapa basado en estos datos, el key debe ser el año de
+        ///incorporación y el valor debe ser el recuento de personas que se unieron en ese año
+        //en particular.
+
+        Map<Integer, Long> contadorPorAnio = employeeList.stream()
+        .collect(Collectors.groupingBy(
+            desarrollador -> Integer.parseInt(desarrollador.getCodigo().substring(0, 4)),
+            Collectors.counting()
+        ));
+        
+        System.out.println("Recuento de personas que se unieron por año: "+ contadorPorAnio);
     }
 }
